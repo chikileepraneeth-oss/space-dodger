@@ -1,94 +1,42 @@
 # SPACE DODGER
 
-Browser space shooter. The PC renders the game. An iPhone is the controller: tilt steers left and right, and the touchscreen fires.
+**▶ Play: [LINK COMING SOON](#)**
 
-The phone and the computer talk through a Node.js WebSocket server. iPhone motion sensors only work on **trusted HTTPS**, so this server generates a local certificate. `http://` and `localhost` on the phone will not steer the ship.
-
-## Run
-
-```powershell
-npm install
-npm run dev
-```
-
-Open the PC page printed in the terminal, usually `https://localhost:8443`. Accept the certificate warning.
-
-## iPhone
-
-1. Phone and PC must be on the same Wi-Fi.
-2. On the iPhone, open the setup URL printed by the server (it looks like `https://192.168.x.x:8443/setup`).
-3. Download the certificate and install the profile.
-4. Settings → General → About → Certificate Trust Settings → enable full trust for **SPACE DODGER Local**.
-5. Scan the QR code on the game screen.
-6. Tap **Start Controller**, allow motion access, hold the phone level, tap **Set Neutral**.
-7. Tilt left and right to steer. Press **Fire** on the phone (or click Play) to start.
-   - **Fire** (hold): continuous lasers.
-   - **Special**: Nova torpedo. It clears enemy fire everywhere and wrecks everything near the blast. You start with 2 charges (max 3). Orange crystals add one.
-   - **Pause**: pause or resume.
+A 3D low-poly space shooter where your **iPhone is the controller**. The game runs in your computer's browser. Scan a QR code with your phone, then tilt it left and right to fly your ship through meteor storms, enemy fleets and boss fights.
 
 ## Gameplay
 
-- 3 lives. A hit makes you invulnerable for a moment.
-- Every 30 s the wave goes up: faster meteors, more enemies, tougher types (fighter → heavy → elite).
-- Every 5th wave a boss arrives. The wave clock stops until you destroy it.
-- Crystals: cyan shield, yellow rapid fire, green double laser, pink repair, orange Nova charge.
-- Meteor rows always leave a lane open, and boss fans leave gaps you can fly through.
-- If the phone disconnects, the game pauses and shows the QR code until the phone reconnects.
-- **Reconnect controller** on the game-over screen makes a new QR code and retires the old phone.
-- Best score is saved in the browser. Volume, mute, music and graphics quality are under Settings.
+- **Steer by tilting:** tilt the phone left or right like a steering wheel. Hold it level to stay centered.
+- **Fight:** hold **Fire** for a stream of lasers. Tap **Special** to launch a Nova torpedo that wipes out everything near the blast.
+- **Survive:** you have 3 lives. Meteors, enemy ships and their shots all cost a life. After a hit you're safe for a moment.
+- **Endless waves:** every 30 seconds the wave goes up, with faster meteors, more enemies and tougher ships.
+- **Bosses:** every 5th wave a huge boss ship arrives. The waves pause until you destroy it.
+- **Enemies:**
+  - **Fighter:** fast, dives straight at you.
+  - **Heavy:** armored, fires three-way spreads.
+  - **Elite:** chases your position and fires in bursts.
+- **Power-ups:** shoot ships and big meteors to drop crystals.
+  - 🔵 Shield
+  - 🟡 Rapid fire
+  - 🟢 Double laser
+  - 🩷 Repair (extra life)
+  - 🟠 Nova charge
+- **Score:** earn points for kills, meteors, power-ups and survival time. Your best score is saved.
 
-If the tilt feels backwards, tap **Invert** and calibrate again.
+## How to play
 
-Safari will not lock landscape. The page asks you to rotate if you are in portrait.
+1. Open the game link on a computer and click **Connect controller**.
+2. Scan the QR code with your iPhone camera.
+3. Tap **Start Controller**, then **Allow** motion access.
+4. Hold the phone sideways and level, then tap **Set Neutral**.
+5. Press **Fire** to launch.
 
-## If the QR code cannot be opened
+## Tech
 
-The code uses the PC's LAN address, never `localhost`. Override it if the guessed address is wrong:
-
-```powershell
-$env:HOST_IP="192.168.1.20"
-npm run dev
-```
-
-For a trusted public HTTPS tunnel, point `PUBLIC_URL` at the tunnel origin and aim the tunnel at `https://127.0.0.1:8443` (or at HTTP only if you terminate TLS at the tunnel and also change the server). The page the phone opens must be the same origin the WebSocket uses.
-
-To use your own certificate instead of the generated one:
-
-```powershell
-$env:CERT_FILE="C:\path\cert.pem"
-$env:CERT_KEY="C:\path\key.pem"
-npm run dev
-```
-
-## Debug keys
-
-Add `?debug=1` to the PC URL to play with the keyboard while no phone is connected: A/D or the arrow keys steer, Space fires, E launches the Nova. Esc or P pauses at any time. Keyboard input is ignored after a controller connects.
-
-## Checks
-
-```powershell
-npm test
-```
-
-## Production build
-
-```powershell
-npm run build
-npm start
-```
-
-## Deploy online (Render)
-
-One free **Render** web service hosts the game page, the controller page and the WebSocket relay. Render gives real HTTPS, so the iPhone needs no certificate, no Tailscale and no shared Wi-Fi.
-
-1. Render dashboard → **New → Blueprint** → connect GitHub → pick this repo. Render reads `render.yaml`.
-2. Click **Apply**. The first build takes 2–4 minutes.
-3. Open the service URL, e.g. `https://space-dodger.onrender.com`. Check `/health` shows `{"ok":true}`.
-4. PC: open the URL → Connect controller. iPhone (any network, Wi-Fi off is fine): scan the QR code.
-
-Nothing else to configure: the server reads `RENDER_EXTERNAL_URL` for QR links and only accepts WebSockets from that address.
-
-Free services sleep after 15 minutes idle; the first load then takes ~50 s. A redeploy drops sessions, so rescan the QR code.
-
-### Optional: Netlify frontend + Render backend
-Only needed if you want the pages on Netlify. Set `VITE_BACKEND_URL` (Render URL) in Netlify and `FRONTEND_URL` (Netlify URL) in Render. `netlify.toml` has the build settings.
+- **Three.js** for the 3D graphics. Every ship, meteor and effect is built in code, with no downloaded models.
+- **HTML, CSS and plain JavaScript** (ES modules) for the game and the phone controller page.
+- **Device Orientation API** to read the iPhone's tilt, with calibration, a dead zone and smoothing.
+- **Node.js, Express and WebSockets (`ws`)** to link the phone to the game in real time, using secure per-session pairing tokens.
+- **QR codes** (`qrcode`) for one-scan pairing.
+- **Web Audio API** for the sound effects and music, all generated in code.
+- **Vite** for building, and **Render** for hosting.
