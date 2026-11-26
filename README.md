@@ -1,6 +1,6 @@
 # SPACE DODGER
 
-**▶ Play: [LINK COMING SOON](#)**
+**▶ Play: [LINK COMING SOON](# https://space-dodger-b8lc.onrender.com/ )**
 
 A 3D low-poly space shooter where your **iPhone is the controller**. The game runs in your computer's browser. Scan a QR code with your phone, then tilt it left and right to fly your ship through meteor storms, enemy fleets and boss fights.
 
