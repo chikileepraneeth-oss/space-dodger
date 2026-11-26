@@ -24,7 +24,6 @@ export function createSessionManager() {
         game: null,
         controller: null,
         x: 0,
-        y: 0,
         fire: false,
         createdAt: Date.now(),
         updatedAt: Date.now(),

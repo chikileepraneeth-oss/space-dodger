@@ -122,11 +122,6 @@ export class Player {
     const blend = 1 - Math.exp(-CONFIG.movementSmoothing * dt);
     if (!input.paused) {
       this.object.position.x = THREE.MathUtils.lerp(this.object.position.x, target, blend);
-      const lift = input.effectiveY();
-      const targetZ = lift >= 0 ? -lift * CONFIG.maxForward : -lift * CONFIG.maxBack;
-      this.prevZ = this.object.position.z;
-      this.object.position.z = THREE.MathUtils.lerp(this.object.position.z, targetZ, blend);
-      this.object.rotation.x = THREE.MathUtils.lerp(this.object.rotation.x, -lift * 0.18, blend);
       this.object.rotation.z = THREE.MathUtils.lerp(this.object.rotation.z, -steer * CONFIG.bankAngle, blend);
       this.object.rotation.y = THREE.MathUtils.lerp(this.object.rotation.y, steer * 0.16, blend);
     }

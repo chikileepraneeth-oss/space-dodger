@@ -153,7 +153,7 @@ export class Game {
         if (this.state === 'playing') this.setState('paused');
         break;
       case 'PLAYER_INPUT':
-        this.input.setMove(message.x, message.y);
+        this.input.setMove(message.x);
         this.input.fire = message.fire === true;
         break;
       case 'SPECIAL_ATTACK':

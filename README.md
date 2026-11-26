@@ -22,7 +22,6 @@ Open the PC page printed in the terminal, usually `https://localhost:8443`. Acce
 5. Scan the QR code on the game screen.
 6. Tap **Start Controller**, allow motion access, hold the phone level, tap **Set Neutral**.
 7. Tilt left and right to steer. Press **Fire** on the phone (or click Play) to start.
-   - Tip the phone forward or back to fly up or down the screen. Wrong way? Tap **Flip up/down**.
    - **Fire** (hold): continuous lasers.
    - **Special**: Nova torpedo. It clears enemy fire everywhere and wrecks everything near the blast. You start with 2 charges (max 3). Orange crystals add one.
    - **Pause**: pause or resume.
@@ -63,7 +62,7 @@ npm run dev
 
 ## Debug keys
 
-Add `?debug=1` to the PC URL to play with the keyboard while no phone is connected: A/D or left/right arrows steer, W/S or up/down arrows move up/down, Space fires, E launches the Nova. Esc or P pauses at any time. Keyboard input is ignored after a controller connects.
+Add `?debug=1` to the PC URL to play with the keyboard while no phone is connected: A/D or the arrow keys steer, Space fires, E launches the Nova. Esc or P pauses at any time. Keyboard input is ignored after a controller connects.
 
 ## Checks
 

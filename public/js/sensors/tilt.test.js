@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { horizontalTiltDegrees, normalizeScreenAngle, normalizeTilt, verticalTiltDegrees } from './tilt.js';
+import { horizontalTiltDegrees, normalizeScreenAngle, normalizeTilt } from './tilt.js';
 
 test('maps landscape tilt onto the screen left-right axis', () => {
   assert.equal(normalizeScreenAngle(-90), 270);
@@ -19,9 +19,3 @@ test('calibrates a neutral hold and clamps the result', () => {
   assert.ok(normalizeTilt(6, 10, 1) < 0);
 });
 
-test('maps forward/back pitch onto the screen up-down axis', () => {
-  assert.equal(verticalTiltDegrees({ gamma: 40, beta: 5 }, 90), 40);
-  assert.equal(verticalTiltDegrees({ gamma: 40, beta: 5 }, 270), -40);
-  assert.equal(verticalTiltDegrees({ gamma: 3, beta: 30 }, 0), -30);
-  assert.equal(verticalTiltDegrees({}, 90), 0);
-});

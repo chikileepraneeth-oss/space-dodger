@@ -1,5 +1,5 @@
 import { GameSocket } from './network.js';
-import { horizontalTiltDegrees, normalizeTilt, verticalTiltDegrees } from './sensors/tilt.js';
+import { horizontalTiltDegrees, normalizeTilt } from './sensors/tilt.js';
 
 const SEND_HZ = 40;
 const SPECIAL_COOLDOWN = 1.5; // the game also limits Nova charges
@@ -27,13 +27,9 @@ export class ControllerApp {
     this.sensitivity = Number(localStorage.getItem('space-dodger-sensitivity') || 1);
     this.invert = localStorage.getItem('space-dodger-invert') === '1';
     this.calibrated = false;
-    this.invertY = localStorage.getItem('space-dodger-invert-y') === '1';
     this.neutral = 0;
-    this.neutralY = 0;
     this.rawTilt = 0;
-    this.rawPitch = 0;
     this.output = 0;
-    this.outputY = 0;
     this.fire = false;
     this.paired = false;
     this.sensor = 'unknown';
@@ -64,7 +60,7 @@ export class ControllerApp {
       <section class="gate" data-screen="calibrate" hidden>
         <p class="eyebrow">Calibration</p>
         <h1>Hold it level</h1>
-        <p>Rest the phone in the neutral position you want to be center, then set it. Tilt left/right to steer, tip forward/back to fly up/down.</p>
+        <p>Rest the phone in the neutral position you want to be center, then set it.</p>
         <button type="button" class="calibrate">Set Neutral</button>
       </section>
       <section class="pad" data-screen="play" hidden>
@@ -79,7 +75,6 @@ export class ControllerApp {
           <div class="tools">
             <button type="button" class="recal">Recalibrate</button>
             <button type="button" class="invert">Invert</button>
-            <button type="button" class="invert-y">Flip up/down</button>
             <label>Sensitivity <input class="sensitivity" type="range" min="0.5" max="2" step="0.1" /></label>
           </div>
         </div>
@@ -116,12 +111,6 @@ export class ControllerApp {
     this.root.querySelector('.start').addEventListener('click', () => this.start());
     this.root.querySelector('.calibrate').addEventListener('click', () => this.calibrate());
     this.root.querySelector('.recal').addEventListener('click', () => {
-      this.calibrated = false;
-      this.show('calibrate');
-    });
-    this.root.querySelector('.invert-y').addEventListener('click', () => {
-      this.invertY = !this.invertY;
-      localStorage.setItem('space-dodger-invert-y', this.invertY ? '1' : '0');
       this.calibrated = false;
       this.show('calibrate');
     });
@@ -238,23 +227,17 @@ export class ControllerApp {
     this.sawOrientation = true;
     const tilt = horizontalTiltDegrees(event, screenAngle());
     this.rawTilt = this.invert ? -tilt : tilt;
-    const pitch = verticalTiltDegrees(event, screenAngle());
-    this.rawPitch = this.invertY ? -pitch : pitch;
     const sample = this.calibrated ? normalizeTilt(this.rawTilt, this.neutral, this.sensitivity) : 0;
-    const sampleY = this.calibrated ? normalizeTilt(this.rawPitch, this.neutralY, this.sensitivity) : 0;
     const blend = 1 - Math.exp(-14 * dt);
     this.output += (sample - this.output) * blend;
-    this.outputY += (sampleY - this.outputY) * blend;
     this.paintMeter();
   };
 
   calibrate() {
     if (!this.sawOrientation) return;
     this.neutral = this.rawTilt;
-    this.neutralY = this.rawPitch;
     this.calibrated = true;
     this.output = 0;
-    this.outputY = 0;
     this.show('play');
     this.paintMeter();
   }
@@ -263,8 +246,7 @@ export class ControllerApp {
     if (!this.meter) return;
     const shown = this.calibrated ? this.output : 0;
     this.meter.style.transform = `translateX(${shown * 42}%)`;
-    const shownY = this.calibrated ? this.outputY : 0;
-    this.readout.textContent = `↔ ${shown.toFixed(2)}   ↕ ${shownY.toFixed(2)}`;
+    this.readout.textContent = shown.toFixed(2);
     this.sensorLabel.textContent = this.sawOrientation ? 'Sensor live' : 'No sensor data';
     this.calLabel.textContent = this.calibrated ? 'Calibrated' : 'Not calibrated';
     const remain = this.specialReadyAt - performance.now();
@@ -276,8 +258,7 @@ export class ControllerApp {
     this.stopSending();
     this.sendTimer = setInterval(() => {
       if (!this.paired || !this.calibrated) return;
-      const round = (v) => Math.round(v * 1000) / 1000;
-      this.socket.send({ type: 'MOVE', x: round(this.output), y: round(this.outputY) });
+      this.socket.send({ type: 'MOVE', x: Math.round(this.output * 1000) / 1000 });
       this.paintMeter();
     }, 1000 / SEND_HZ);
   }

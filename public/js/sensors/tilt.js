@@ -36,25 +36,3 @@ export function normalizeTilt(degrees, neutral, sensitivity) {
   return Math.max(-1, Math.min(1, value));
 }
 
-/**
- * Forward/back tilt for the screen's up/down axis. Positive = far edge tipped away (push forward).
- * Landscape: the phone's long (y) axis runs left-right, so pitching toward/away rotates around it,
- * which is gamma. gamma > 0 means the device's +x edge dropped; in landscape-90 that is the far edge.
- * Portrait: pitch is beta, which grows as the top edge rises, so forward is -beta.
- */
-export function verticalTiltDegrees(event, screenAngle) {
-  const beta = Number(event?.beta);
-  const gamma = Number(event?.gamma);
-  const safeBeta = Number.isFinite(beta) ? beta : 0;
-  const safeGamma = Number.isFinite(gamma) ? gamma : 0;
-  switch (normalizeScreenAngle(screenAngle)) {
-    case 90:
-      return safeGamma;
-    case 270:
-      return -safeGamma;
-    case 180:
-      return safeBeta;
-    default:
-      return -safeBeta;
-  }
-}

@@ -1,8 +1,5 @@
 export const CONFIG = {
   maxHorizontalRange: 7.5,
-  // Up/down tilt moves the ship along the play plane: forward shows as up on the chase camera.
-  maxForward: 4.5,
-  maxBack: 2,
   movementSmoothing: 8,
   bankAngle: 0.42,
   cameraFollow: 4.5,

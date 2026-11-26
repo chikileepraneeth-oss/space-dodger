@@ -28,7 +28,6 @@ function forwardInput(session) {
   send(session.game, {
     type: 'PLAYER_INPUT',
     x: session.x,
-    y: session.y,
     fire: session.fire,
   });
 }
@@ -59,7 +58,6 @@ export function attachWebSocket(wss, { sessions, getBaseUrl }) {
       session.controller = null;
       session.fire = false;
       session.x = 0;
-      session.y = 0;
       send(session.game, { type: 'CONTROLLER_DISCONNECTED' });
       forwardInput(session);
     }
@@ -141,7 +139,6 @@ export function attachWebSocket(wss, { sessions, getBaseUrl }) {
     if (message.type === 'MOVE') {
       if (!allow(ws, 'move', 70, 1000)) return;
       session.x = message.x;
-      session.y = message.y;
       forwardInput(session);
       return;
     }

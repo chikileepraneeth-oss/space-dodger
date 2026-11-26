@@ -48,8 +48,6 @@ export class World {
     this.health.reset();
     this.score.reset();
     this.player.object.position.x = 0;
-    this.player.object.position.z = 0;
-    this.player.prevZ = 0;
     this.player.object.visible = true;
     this.player.setShield(false);
     this.dead = false;
@@ -73,8 +71,7 @@ export class World {
 
     const px = this.player.object.position.x;
     this.enemyCtx.playerX = px;
-    const pz = this.player.object.position.z;
-    const { fired, detonate } = this.weapons.update(dt, input.fire, px, pz);
+    const { fired, detonate } = this.weapons.update(dt, input.fire, px);
     if (fired) this.audio.play('laser');
     if (detonate) this.detonate();
 
@@ -87,7 +84,7 @@ export class World {
     // Engine trail and damage blink.
     const p = this.player.object;
     for (const side of [-0.32, 0.32]) {
-      this.effects.emit(p.position.x + side, -0.02, p.position.z + 1.25, (Math.random() - 0.5) * 0.6, (Math.random() - 0.5) * 0.4, 6 + Math.random() * 3, 0.22, 0x37e7ff);
+      this.effects.emit(p.position.x + side, -0.02, 1.25, (Math.random() - 0.5) * 0.6, (Math.random() - 0.5) * 0.4, 6 + Math.random() * 3, 0.22, 0x37e7ff);
     }
     p.visible = this.health.invulnerable > 0 ? Math.floor(this.elapsed * 18) % 2 === 0 : true;
     this.player.setShield(this.health.shield > 0);
@@ -112,8 +109,7 @@ export class World {
 
   special() {
     if (this.dead) return;
-    const { x, z } = this.player.object.position;
-    this.audio.play(this.weapons.special(x, z) ? 'launch' : 'empty');
+    this.audio.play(this.weapons.special(this.player.object.position.x) ? 'launch' : 'empty');
   }
 
   damageMeteor(meteor, damage) {

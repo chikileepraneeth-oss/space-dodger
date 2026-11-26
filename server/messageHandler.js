@@ -16,11 +16,8 @@ export function parseMessage(raw) {
   }
   if (data.type === 'MOVE') {
     const x = Number(data.x);
-    // y is optional so older controllers that only steer sideways keep working.
-    const y = data.y === undefined ? 0 : Number(data.y);
-    if (!Number.isFinite(x) || !Number.isFinite(y)) return { ok: false, error: 'BAD_MOVE' };
-    const clamp = (v) => Math.max(-1, Math.min(1, v));
-    return { ok: true, message: { type: 'MOVE', x: clamp(x), y: clamp(y) } };
+    if (!Number.isFinite(x)) return { ok: false, error: 'BAD_MOVE' };
+    return { ok: true, message: { type: 'MOVE', x: Math.max(-1, Math.min(1, x)) } };
   }
   if (data.type === 'FIRE') {
     return { ok: true, message: { type: 'FIRE', pressed: data.pressed === true } };

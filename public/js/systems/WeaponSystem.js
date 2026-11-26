@@ -34,7 +34,7 @@ export class WeaponSystem {
   }
 
   /** Returns { fired, detonate } so the world can play sounds and trigger the blast. */
-  update(dt, firing, playerX, playerZ = 0) {
+  update(dt, firing, playerX) {
     this.rapid = Math.max(0, this.rapid - dt);
     this.double = Math.max(0, this.double - dt);
     this.cooldown -= dt;
@@ -44,7 +44,7 @@ export class WeaponSystem {
     if (firing && this.cooldown <= 0) {
       this.cooldown = this.rapid > 0 ? CONFIG.rapidFireInterval : CONFIG.fireInterval;
       const offsets = this.double > 0 ? [-0.55, 0.55] : [0];
-      for (const o of offsets) this.lasers.fire(playerX + o, playerZ - 1.9, 0, -CONFIG.laserSpeed);
+      for (const o of offsets) this.lasers.fire(playerX + o, -1.9, 0, -CONFIG.laserSpeed);
       fired = true;
     }
     this.lasers.update(dt);
@@ -60,14 +60,14 @@ export class WeaponSystem {
     return { fired, detonate };
   }
 
-  special(playerX, playerZ = 0) {
+  special(playerX) {
     if (this.charges <= 0 || this.specialCooldown > 0 || this.torpedo.active) return false;
     this.charges -= 1;
     this.specialCooldown = CONFIG.specialCooldown;
     this.torpedo.active = true;
     this.torpedo.object.visible = true;
-    this.torpedo.object.position.set(playerX, 0, playerZ - 2);
-    this.torpedo.prevZ = playerZ - 2;
+    this.torpedo.object.position.set(playerX, 0, -2);
+    this.torpedo.prevZ = -2;
     return true;
   }
 
