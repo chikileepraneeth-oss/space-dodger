@@ -1,0 +1,23 @@
+{
+  "name": "space-dodger",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Semi-3D space shooter steered by an iPhone gyroscope",
+  "scripts": {
+    "dev": "node server.js",
+    "start": "node server.js --production",
+    "build": "vite build",
+    "test": "node --test server/*.test.js public/js/sensors/*.test.js public/js/systems/*.test.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "qrcode": "^1.5.4",
+    "selfsigned": "^2.4.1",
+    "three": "^0.170.0",
+    "ws": "^8.18.0"
+  },
+  "devDependencies": {
+    "vite": "^6.0.3"
+  }
+}

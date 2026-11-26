@@ -1,0 +1,13 @@
+# One Render web service hosts the game page, the controller page and the WebSocket relay.
+# Render provides HTTPS, so the iPhone needs no certificate, Tailscale or shared Wi-Fi.
+services:
+  - type: web
+    name: space-dodger
+    runtime: node
+    plan: free
+    buildCommand: npm ci --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    envVars:
+      - key: NODE_VERSION
+        value: "22"

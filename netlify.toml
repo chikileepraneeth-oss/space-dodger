@@ -1,0 +1,13 @@
+# Frontend: the PC game page and the phone controller page, as static files.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+  # Set VITE_BACKEND_URL in the Netlify UI to your Render URL, e.g. https://space-dodger-server.onrender.com
+
+[[redirects]]
+  from = "/controller"
+  to = "/controller.html"
+  status = 200
