@@ -41,6 +41,7 @@ export function attachWebSocket(wss, { sessions, getBaseUrl }) {
       type: 'SESSION',
       sessionId: session.id,
       token: session.token,
+      hostToken: session.hostToken,
       controllerUrl: url,
       qr: await makeQrDataUrl(url),
       reachable: !baseUrl.includes('localhost'),
@@ -69,7 +70,8 @@ export function attachWebSocket(wss, { sessions, getBaseUrl }) {
     let session = null;
     if (message.sessionId) {
       session = sessions.get(message.sessionId);
-      if (!session || !tokensMatch(session.token, message.token)) {
+      // Only the host secret can re-take a game screen; the QR pairing token cannot.
+      if (!session || !tokensMatch(session.hostToken, message.token)) {
         send(ws, { type: 'ERROR', code: 'BAD_SESSION' });
         return;
       }

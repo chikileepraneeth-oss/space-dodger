@@ -135,7 +135,7 @@ export class Game {
   onMessage(message) {
     switch (message.type) {
       case 'SESSION':
-        sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ sessionId: message.sessionId, token: message.token }));
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ sessionId: message.sessionId, token: message.hostToken }));
         this.pairing.showSession(message);
         this.setConnected(Boolean(message.controllerConnected));
         break;

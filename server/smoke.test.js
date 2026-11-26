@@ -72,6 +72,15 @@ test('pairs one controller and forwards only that session', { timeout: 30000 }, 
     intruder.send(JSON.stringify({ type: 'PAIR', sessionId: sessionA.sessionId, token: sessionA.token }));
     assert.equal((await rejected).code, 'CONTROLLER_TAKEN');
 
+    const hijack = await openSocket(server.port);
+    const denied = nextMatch(hijack, (message) => message.type === 'ERROR');
+    hijack.send(JSON.stringify({ type: 'HOST', sessionId: sessionA.sessionId, token: sessionA.token }));
+    assert.equal((await denied).code, 'BAD_SESSION', 'QR token must not re-host the game');
+    const rehost = nextMatch(gameA, (message) => message.type === 'SESSION');
+    gameA.send(JSON.stringify({ type: 'HOST', sessionId: sessionA.sessionId, token: sessionA.hostToken }));
+    assert.equal((await rehost).sessionId, sessionA.sessionId);
+    hijack.close();
+
     const wrong = await openSocket(server.port);
     const bad = nextMatch(wrong, (message) => message.type === 'ERROR');
     wrong.send(JSON.stringify({ type: 'PAIR', sessionId: sessionA.sessionId, token: 'nope' }));

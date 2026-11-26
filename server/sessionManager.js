@@ -18,7 +18,9 @@ export function createSessionManager() {
       while (sessions.has(id)) id = sessionId();
       const session = {
         id,
+        // token goes in the QR code (phone pairing); hostToken stays with the PC game only.
         token: randomBytes(18).toString('hex'),
+        hostToken: randomBytes(18).toString('hex'),
         game: null,
         controller: null,
         x: 0,
